@@ -1,0 +1,28 @@
+pwd: .../DAGT
+
+disease_num: 1
+in_channels: 3
+hidden_channels: 512
+backbone: covid19_v1
+
+dropout: 0.1
+lr: 0.00001
+lr_z: 0.05
+train_epoch: 500
+
+burn_in_steps: 2
+
+Tstep: 4
+
+num_workers: 1
+train_batch: 16
+
+save_path: result
+data_dir: .../DAGT/data/covid19/v1
+traj_file: X.npy
+edge_file: A.npy
+
+loss_type: nll
+
+left: 0
+right: 163

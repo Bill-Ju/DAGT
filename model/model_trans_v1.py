@@ -1,11 +1,3 @@
-'''
-Re-implementation of NRI on the non-armotized setting.
-The re-implementation are limited to the case of two edge types,
-
-Implemented based on https://github.com/ethanfetaya/NRI 
-Implemented based on https://github.com/loeweX/AmortizedCausalDiscovery
-'''
-
 import torch
 import torch.nn.functional as F
 import torch.nn as nn

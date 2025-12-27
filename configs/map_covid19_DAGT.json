@@ -1,0 +1,32 @@
+[
+    {
+        "map_index": 0,
+        "map_name": "Alaska",
+        "loc_num": 31
+    },
+    {
+        "map_index": 1,
+        "map_name": "Illinois",
+        "loc_num": 102
+    },
+    {
+        "map_index": 2,
+        "map_name": "Maine",
+        "loc_num": 16
+    },
+    {
+        "map_index": 3,
+        "map_name": "Minnesota",
+        "loc_num": 87
+    },
+    {
+        "map_index": 4,
+        "map_name": "Utah",
+        "loc_num": 29
+    },
+    {
+        "map_index": 5,
+        "map_name": "Washington",
+        "loc_num": 39
+    }
+]

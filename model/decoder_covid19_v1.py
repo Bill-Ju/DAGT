@@ -28,8 +28,11 @@ class MaskedMultiHeadAttentionLayer(nn.Module):
         # self.W_qkv = nn.Linear(in_dim, total_out_dim * 3, bias=True)
         self.W_q = nn.Linear(in_dim, total_out_dim, bias=True) 
         self.W_k = nn.Linear(in_dim, total_out_dim, bias=True) 
+    
+        # 独立的 V 投影
         self.W_v_in = nn.Linear(in_dim, total_out_dim, bias=True)
         self.W_v_out = nn.Linear(in_dim, total_out_dim, bias=True)
+        # Final output projection
         self.W_i = nn.Linear(total_out_dim, out_dim, bias=True)
         if self.dual_attention:
             self.W_o = nn.Linear(total_out_dim, out_dim, bias=True)
@@ -39,19 +42,20 @@ class MaskedMultiHeadAttentionLayer(nn.Module):
         h: Input node features, shape (batch_size, num_nodes, in_dim)
         g: Adjacency matrix for masking, shape (batch_size, num_nodes, num_nodes)
         """
-        B, N, _ = h.shape # B: batch_size, N: num_nodes
+        B, N, _ = h.shape
+
 
         q = self.W_q(h)
         k = self.W_k(h)
-        # q, k = torch.chunk(qk, 2, dim=-1)
+        
         q = q.view(B, N, self.num_heads, self.d_k).transpose(1, 2)
         k = k.view(B, N, self.num_heads, self.d_k).transpose(1, 2)
         
-        # 4. Scaled Dot-Product
+        # 计算 Attention Scores
         attention_weights = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.d_k)
-        mask = g.unsqueeze(0).unsqueeze(0) # Shape: (B, 1, N, N)
+        # mask = g.unsqueeze(0).unsqueeze(0) # Shape: (B, 1, N, N)
+        mask = g.unsqueeze(1) 
         
-        # attention_weights = F.softmax(attention_weights, dim=-1)
         attention_weights = F.softplus(attention_weights)
         
         attention_weights = attention_weights * mask
@@ -88,12 +92,6 @@ class MaskedGraphTransformerLayer(nn.Module):
 
         self.attention = MaskedMultiHeadAttentionLayer(self.in_dim, self.out_dim, self.num_heads, self.dual_attention)
         if self.dual_attention:
-            if self.gates:
-                self.gate_mlp = nn.Sequential(
-                    nn.Linear(2*self.out_dim, self.out_dim),
-                    nn.Softplus(),
-                )
-                self.gate_norm = nn.LayerNorm(self.out_dim)
             self.O = nn.Sequential(
             nn.Linear(3*self.out_dim, self.out_dim),
             nn.Softplus(),
@@ -105,33 +103,25 @@ class MaskedGraphTransformerLayer(nn.Module):
             )
         self.in_fc = nn.Linear(self.out_dim, self.out_dim)
         self.out_fc = nn.Linear(self.out_dim, self.out_dim)
-        # self.batch_norm1 = nn.BatchNorm1d(self.num_nodes)
         self.batch_norm1 = nn.LayerNorm(self.out_dim)
         # FFN
         self.FFN_layer1 = nn.Linear(self.out_dim, self.out_dim * 2)
         self.FFN_layer2 = nn.Linear(self.out_dim * 2, self.out_dim)
 
-        # self.batch_norm2 = nn.BatchNorm1d(self.num_nodes)
         self.batch_norm2 = nn.LayerNorm(self.out_dim)
 
     def forward(self, h, g):
 
-        h_res1 = h  # for first residual connection, shape as self.hid_dim
+        h_res1 = h
 
-        if self.dual_attention:
-            output_in, output_out = self.attention(h, g)  
+        output_in, output_out = self.attention(h, g)  
 
-            h = torch.cat((h_res1, output_in, output_out), dim=-1)
+        gate_output = torch.cat((h_res1, output_in, output_out), dim=-1)
+        h = gate_output
 
-        else:
-            output_in, _ = self.attention(h, g)
-            h = torch.cat([h_res1, output_in], dim=-1)
-        
         h = self.O(h)
-
         h = self.batch_norm1(h)
-
-        h_res2 = h  # for second residual connection
+        h_res2 = h
         # FFN
         h = self.FFN_layer1(h)
         h = F.softplus(h)
@@ -155,17 +145,16 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
 
         in_channels = args.in_channels
+        out_channels = 1
         hidden_channels = args.hidden_channels
         
-        self.skip_first_edge_type = args.skip_first_edge_type
         self.dropout = args.dropout
-        self.preds = args.Tstep -1
-        self.gumbel_noise = args.gumbel_noise
-
+        self.preds = 1
+        
         self.transformer_layers = nn.ModuleList(
-            [MaskedGraphTransformerLayer(hidden_channels,hidden_channels, args.num_head,
+            [MaskedGraphTransformerLayer(hidden_channels,hidden_channels, 4,
                                          dropout=self.dropout,
-                                         dual_attention=args.dual_attention, gates=args.gate) for _ in range(1)])
+                                         dual_attention=True, gates=False) for _ in range(1)])
         
         self.input_fc = nn.Sequential(
             nn.Linear(in_channels, hidden_channels),
@@ -176,32 +165,31 @@ class Decoder(nn.Module):
         
         self.out_fc1 = nn.Linear(2*hidden_channels, hidden_channels)
         self.out_fc2 = nn.Linear(hidden_channels, hidden_channels)
-        self.out_fc3 = nn.Linear(hidden_channels, in_channels)
+        self.out_fc3 = nn.Linear(hidden_channels, out_channels)
 
     def single_step_forward(self, x, g):
 
-        x0 = x.clone()
+        # x0 = x.clone()
+
+        h_base = self.input_fc(x) 
+
+        h_res = h_base.clone() 
         
-        h = self.input_fc(x)
-        # h = self.norm_input(h)
-        h_res = h.clone()
-        # for transformer_layer in self.transformer_layers:
-        h_agg = self.transformer_layers[0](h, g)
+        # 注意：这里需要修改 Transformer 接收两个输入
+        h_agg = self.transformer_layers[0](h_base, g)
         
         all_info = torch.cat((h_res, h_agg), dim=-1)
         # Output mlp
         pred = F.dropout(F.softplus(self.out_fc1(all_info)), p=self.dropout, training=self.training)
-        pred = F.dropout(F.softplus(self.out_fc2(pred)), p=self.dropout, training=self.training)
+        pred = F.dropout(F.tanh(self.out_fc2(pred)), p=self.dropout, training=self.training)
         pred = self.out_fc3(pred)
-        return x0 + pred
+        return pred
 
     def forward(self, inputs, g):
-        last_pred = inputs[...,0]
-        preds = []
+        last_pred = inputs[:,:,0,:]
+        # print(f"last_pred shape:{last_pred.shape}")
 
-        for step in range(0,self.preds):
-            last_pred = self.single_step_forward(last_pred, g)
-            preds.append(last_pred.unsqueeze(-1))
-
-        preds = torch.cat(preds,dim=-1)
-        return preds
+        pred = self.single_step_forward(last_pred, g)
+        
+        # print(f"preds shape:{pred.shape}")
+        return pred
