@@ -1,6 +1,6 @@
 import torch
 import torch.optim as optim
-from utils import *
+from util.utils import *
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np

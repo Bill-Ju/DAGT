@@ -8,7 +8,7 @@ Implemented based on https://github.com/loeweX/AmortizedCausalDiscovery
 
 import torch
 import torch.optim as optim
-from utils import *
+from util.utils import *
 import argparse
 from model.model_trans_weight_v1 import Decoder
 import numpy as np
