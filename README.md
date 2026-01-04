@@ -32,7 +32,6 @@ The project supports two main data types: simulated data and real COVID-19 data.
 #### Data Generation
 Use the scripts in the `data/` directory to generate various types of simulated data. Examples include:
 
-- Linear dynamics: `python data/generate_linear.py`
 - Kuramoto oscillators: `python data/generate_kuramoto.py` or `python data/generate_kuramoto_weight.py`
 - SIS epidemic model: `python data/generate_SIS.py` or `python data/generate_metapop_SIS.py`
 - Spring-mass systems: `python data/generate_spring.py` or `python data/generate_spring_weight.py`
