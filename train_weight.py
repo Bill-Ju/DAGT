@@ -1,20 +1,14 @@
 import torch
-import torch.optim as optim
 from util.utils import *
 import argparse
 from model.model_trans_weight_v1 import Decoder
 import numpy as np
-import torch.nn as nn
-from torch.utils.data import DataLoader
-from torch_geometric.utils import dense_to_sparse
 from torch.optim import lr_scheduler
-import matplotlib.pyplot as plt
-import networkx as nx
 import random
 
 parser = argparse.ArgumentParser()
 # data
-parser.add_argument('--suffix', type=str, default='SIR_Direct_Weight_BA50_exp0', help='suffix for data')
+parser.add_argument('--suffix', type=str, default='SIS_Direct_Weight_BA50_exp0', help='suffix for data')
 
 parser.add_argument('--tr_num', type=int, default=50,
     help='No. of training trajectories, using all trajectories when None')

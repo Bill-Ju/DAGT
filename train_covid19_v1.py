@@ -18,7 +18,7 @@ torch.manual_seed(seed)
 class Exp:
     def __init__(self, args_obj): # Receive args object
         self.args = args_obj
-        self.map_configs_path = './configs/map_covid19_DAGT.json'
+        self.map_configs_path = './configs/map_covid19.json'
         if os.path.exists(self.map_configs_path):
             with open(self.map_configs_path) as f:
                 self.map_configs = json.load(f)
@@ -187,7 +187,7 @@ class Exp:
             tot_list, tot_top_list, name_pearson_dict = self.eval_net(save_graph)
             self.epoch_training_losses[epoch_idx] = avg_train_loss_epoch
 
-            self.logger.info(f"--- V2 Epoch {epoch_idx+1} Summary ---")
+            self.logger.info(f"--- V1 Epoch {epoch_idx+1} Summary ---")
             self.logger.info(f"  Avg Training Outer Loss: {avg_train_loss_epoch:.6f}")
             self.logger.info(f"  Avg Training Outer Mse: {avg_train_mse_epoch:.6f}")
             self.logger.info(f"  Avg Training Outer Nll: {avg_train_nll_epoch:.6f}")
