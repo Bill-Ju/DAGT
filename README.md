@@ -5,16 +5,13 @@ Inferring latent interaction structures from observational time series is a fund
 
 ## Installation
 
-1. Clone the repository:
+1. Clone the repository and enter the project directory: 
    ```bash
    cd DARI
    ```
 
 2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-   If `requirements.txt` is not present, install the following packages manually:
+   Install the following packages manually:
    - numpy
    - pandas
    - torch
