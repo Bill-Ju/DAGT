@@ -41,8 +41,8 @@ Use the scripts in the `data/` directory to generate various types of simulated 
 Each script generates adjacency matrices and time-series trajectories for training.
 
 #### Training
-- For unweighted graphs: Run `python train_trans.py`
-- For weighted graphs: Run `python train_trans_weight.py`
+- For unweighted graphs: Run `python train.py`
+- For weighted graphs: Run `python train_weight.py`
 
 These scripts train models to infer graph structures from the generated time-series data.
 

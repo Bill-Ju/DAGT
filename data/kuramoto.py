@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # coding: UTF-8
 #
-# Author: Dawid Laszuk
-# Contact: laszukdawid@gmail.com
 #
 # Last update: 12/03/2017
 #
