@@ -68,7 +68,7 @@ def load_disease_data(config, args):
     train_data = train_data.permute(0,2,3,1)
     # data has shape [batch, nodes, variables, time]
     
-    # 创建数据加载器
+    # Create data loader
     train_dataset = TrajrData(map_index, train_data, args.Tstep)
 
     return train_dataset
@@ -152,7 +152,7 @@ class RoundRobinBatchSampler(Sampler):
         )
 
     def __iter__(self):
-        # 为每个 dataset 创建索引列表
+        # Create index list for each dataset
         indices = [list(range(l)) for l in self.lengths]
 
         if self.shuffle:

@@ -29,7 +29,7 @@ class MaskedMultiHeadAttentionLayer(nn.Module):
         self.W_q = nn.Linear(in_dim, total_out_dim, bias=True) 
         self.W_k = nn.Linear(in_dim, total_out_dim, bias=True) 
     
-        # 独立的 V 投影
+        # Independent V projection
         self.W_v_in = nn.Linear(in_dim, total_out_dim, bias=True)
         self.W_v_out = nn.Linear(in_dim, total_out_dim, bias=True)
         # Final output projection
@@ -51,7 +51,7 @@ class MaskedMultiHeadAttentionLayer(nn.Module):
         q = q.view(B, N, self.num_heads, self.d_k).transpose(1, 2)
         k = k.view(B, N, self.num_heads, self.d_k).transpose(1, 2)
         
-        # 计算 Attention Scores
+        # Calculate Attention Scores
         attention_weights = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.d_k)
         # mask = g.unsqueeze(0).unsqueeze(0) # Shape: (B, 1, N, N)
         mask = g.unsqueeze(1) 
@@ -175,7 +175,7 @@ class Decoder(nn.Module):
 
         h_res = h_base.clone() 
         
-        # 注意：这里需要修改 Transformer 接收两个输入
+        # Note: Here you need to modify Transformer to accept two inputs
         h_agg = self.transformer_layers[0](h_base, g)
         
         all_info = torch.cat((h_res, h_agg), dim=-1)

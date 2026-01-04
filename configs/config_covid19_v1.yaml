@@ -1,4 +1,4 @@
-pwd: .../DAGT
+pwd: ./
 
 disease_num: 1
 in_channels: 3
@@ -18,7 +18,7 @@ num_workers: 1
 train_batch: 16
 
 save_path: result
-data_dir: .../DAGT/data/covid19/v1
+data_dir: ./data/covid19/v1
 traj_file: X.npy
 edge_file: A.npy
 

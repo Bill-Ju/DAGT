@@ -9,14 +9,14 @@ from util.logger import setuplogger, save_model, load_model, save_graph
 from torch.optim import lr_scheduler
 import numpy as np
 import torch.nn.functional as F
-from model import utils
+from util import utils
 
 seed=0
 np.random.seed(seed)
 torch.manual_seed(seed)
 
 class Exp:
-    def __init__(self, args_obj): # 接收args对象
+    def __init__(self, args_obj): # Receive args object
         self.args = args_obj
         self.map_configs_path = './configs/map_covid19_DAGT.json'
         if os.path.exists(self.map_configs_path):
@@ -39,7 +39,6 @@ class Exp:
         self.edge_scheduler = None
 
         self.device = f'cuda:3' if torch.cuda.is_available() else 'cpu'
-        self.load_model_path = self.args.load_model_path
 
         self.logger = setuplogger(args_obj)
         self.logger.info(f"args:{self.args}")
@@ -56,17 +55,13 @@ class Exp:
     def _prepare_model_and_optimizers(self, tryload=False):
         self.model = AnyDiffuion(self.map_configs, self.args).to(self.device)
         self.model.device = self.device
-        # --- 2. 收集 Graph 结构参数 (高 LR, 0 Decay) ---
+        # --- 2. Collect Graph structure parameters (High LR, 0 Decay) ---
         g_params = list(self.model.graph_learners.parameters())
-        if self.args.use_prompt:
-            p_params = list(self.model.prompt_learner.parameters())
-            special_ids = set(map(id, g_params + p_params))
-        else:
-            special_ids = set(map(id, g_params))
-            p_params = []
+        special_ids = set(map(id, g_params))
+        p_params = []
         base_params = [p for p in self.model.parameters() if id(p) not in special_ids]
 
-        # --- 4. 定义优化器 ---
+        # --- 4. Define optimizer ---
         self.optimizer = torch.optim.Adam([
             {'params': base_params, 'lr': self.args.lr},
             {'params': p_params, 'lr': self.args.lr},
@@ -82,7 +77,7 @@ class Exp:
         self.model.train()
         
         total_batches = len(self.train_loader)
-        epoch_avg_loss = 0.0 # 用于记录整个epoch的平均外部循环损失
+        epoch_avg_loss = 0.0 # Used to record the average outer loop loss for the entire epoch
         epoch_avg_mse = 0.0
         epoch_avg_nll = 0.0
 
@@ -172,12 +167,12 @@ class Exp:
 
         return tot_list, tot_top_list, name_pearson_dict
 
-    def run(self): # args 现在是 self.args
+    def run(self): # args is now self.args
 
         self._prepare_data_and_loaders()
         self._prepare_model_and_optimizers()
 
-        self.epoch_training_losses = torch.zeros(self.args.train_epoch, device='cpu') # Rank 0记录
+        self.epoch_training_losses = torch.zeros(self.args.train_epoch, device='cpu') # Rank 0 records
         
         best_train_loss = float('inf')
         best_train_mse = float('inf')
@@ -207,9 +202,9 @@ class Exp:
                 save_model(epoch_idx, self.model, self.args,self.logger)
                 self.logger.info(f"  Best model saved at epoch {epoch_idx+1} with loss {best_train_loss:.6f}")
 
-# 修改全局的 train 函数作为 mp.spawn 的目标
-def spawn_train_process(args_obj_for_exp): # 接收args对象
-    exp_instance = Exp(args_obj_for_exp) # 每个进程创建自己的Exp实例
+# Modify the global train function as the target for mp.spawn
+def spawn_train_process(args_obj_for_exp): # Receive args object
+    exp_instance = Exp(args_obj_for_exp) # Each process creates its own Exp instance
     exp_instance.run()
 
 

@@ -7,7 +7,7 @@ def parse_args(config_name='config_covid19_v1'):
     parser.add_argument('--lr', default=1e-4, type=float, help='learning rate')
     parser.add_argument('--lr_z', default=0.01, type=float, help='learning rate')
     parser.add_argument('--dropout', default=0.1, type=float, help='dropout')
-    parser.add_argument('--pwd', default='.../DAGT', type=str, help='project base dir')
+    parser.add_argument('--pwd', default='./DAGT', type=str, help='project base dir')
     parser.add_argument('--in_channels', default=1, type=int, help='information in node')
     parser.add_argument('--hidden_channels', default=128, type=int, help='model hidden layer width')
     parser.add_argument('--Tstep', default=2, type=int, help='rnn model pred steps')
@@ -24,7 +24,7 @@ def parse_args(config_name='config_covid19_v1'):
     parser.add_argument('--traj_file', default='traj_v1.npz', type=str, help='traj_file')
     parser.add_argument('--edge_file', default='edge_switch_v1.npz', type=str, help='edge_switch_v1')
 
-    parser.add_argument('--data_dir', default='.../data/train_data_v11', type=str, help='Name of directory where data is stored.')
+    parser.add_argument('--data_dir', default='./data/train_data_v11', type=str, help='Name of directory where data is stored.')
     parser.add_argument("--temp", default=0.5, type=float, help="Temperature for Gumbel softmax.")
     parser.add_argument("--hard", default=True, type=bool, help="Hard for Gumbel softmax.")
     parser.add_argument('--save_path', default='result', type=str, help='model save path')
@@ -35,7 +35,7 @@ def parse_args(config_name='config_covid19_v1'):
     parser.add_argument('--right', default=34, type=int, help='right boundary')
     config_file_path = './configs/' + config_name + '.yaml'
 
-    # ====== 在这里添加检查文件是否存在 ======
+    # ====== Add file existence check here ======
     if os.path.exists(config_file_path):
         with open(config_file_path) as f:
             config_args = yaml.safe_load(f)

@@ -1,31 +1,17 @@
-'''
-Re-implementation of NRI on the non-armotized setting.
-The re-implementation are limited to the case of two edge types,
-
-Implemented based on https://github.com/ethanfetaya/NRI 
-Implemented based on https://github.com/loeweX/AmortizedCausalDiscovery
-'''
-
 import torch
-import torch.optim as optim
+from torch.optim import lr_scheduler
 from util.utils import *
 import argparse
 from model.model_trans_v1 import Decoder,get_edge_prob
 import numpy as np
-import torch.nn as nn
-from torch.utils.data import DataLoader
-from torch_geometric.utils import dense_to_sparse
-from torch.optim import lr_scheduler
-import matplotlib.pyplot as plt
-import networkx as nx
 import random
 import time
 
 parser = argparse.ArgumentParser()
 # data
-parser.add_argument('--suffix', type=str, default='Kuramoto_Direct_BA50_exp0', help='suffix for data')
+parser.add_argument('--suffix', type=str, default='MM_BA50_exp0', help='suffix for data')
 
-parser.add_argument('--tr_num', type=int, default=20,
+parser.add_argument('--tr_num', type=int, default=50,
     help='No. of training trajectories, using all trajectories when None')
 
 parser.add_argument('--va_num', type=int, default=30,
@@ -37,7 +23,7 @@ parser.add_argument('--te_num', type=int, default=10,
 parser.add_argument('--sample_freq', type=int, default=1,
     help='Sampling frequency of the trajectory')
 
-parser.add_argument('--trajr_length', type=int, default=30,
+parser.add_argument('--trajr_length', type=int, default=10,
     help='No. of time stamps in each trajectory, using all data when None')
 
 parser.add_argument('--interlacing', type=bool, default=True,
@@ -101,7 +87,7 @@ print(x_tr.shape,x_va.shape,x_te.shape)
 def is_undirected_float(A, tolerance=1e-8):
     if A.shape[0] != A.shape[1]:
         return False
-    # 使用 np.allclose 检查浮点数对称性
+    # Use np.allclose to check floating-point symmetry
     return np.allclose(A, A.T, atol=tolerance)
 print(f"A_weighted 是无向图吗? {is_undirected_float(A)}")
 Tstep = args.Tstep
@@ -224,7 +210,7 @@ if __name__ == '__main__':
         
     import sys
     # Open a file for logging
-    log_file = open('results_logs/trans_'+args.suffix+'_'+str(args.sample_freq)+'_'+str(args.tr_num)+'_'+str(args.trajr_length)+'.txt', 'a')
+    log_file = open('result/trans_'+args.suffix+'_'+str(args.sample_freq)+'_'+str(args.tr_num)+'_'+str(args.trajr_length)+'.txt', 'a')
     sys.stdout = log_file
     
     print(f'model:trans, seed:{seed}, auc:{best_auc_from_va}, acc:{best_acc_from_va}, last_auc:{last_auc}, train_loss:{best_train_loss}, test_loss:{best_mes_from_va}')

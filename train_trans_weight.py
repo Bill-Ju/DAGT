@@ -1,11 +1,3 @@
-'''
-Re-implementation of NRI on the non-armotized setting.
-The re-implementation are limited to the case of two edge types,
-
-Implemented based on https://github.com/ethanfetaya/NRI 
-Implemented based on https://github.com/loeweX/AmortizedCausalDiscovery
-'''
-
 import torch
 import torch.optim as optim
 from util.utils import *
@@ -260,7 +252,7 @@ if __name__ == '__main__':
     import sys
 
     # Open a file for logging
-    log_file = open('results_logs/trans_weight_'+args.suffix+'_'+str(args.sample_freq)+'_'+str(args.tr_num)+'_'+str(args.trajr_length)+'.txt', 'a')
+    log_file = open('result/trans_weight_'+args.suffix+'_'+str(args.sample_freq)+'_'+str(args.tr_num)+'_'+str(args.trajr_length)+'.txt', 'a')
     sys.stdout = log_file
     print('model:trans_weight_, seed:{:08d}, tot:{:.4f}, tot_top:{:.4f}, last_tot:{:.4f}, train_loss:{:.8f}, test_loss:{:.8f}'.format(seed,best_tot_from_va,best_tot_top_from_va,tot_pearson,best_train_loss,best_mes_from_va))
     sys.stdout = sys.__stdout__

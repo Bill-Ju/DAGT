@@ -10,7 +10,7 @@ import torch.nn.functional as F
 
 def load_data(args):
     cur_dir = os.path.dirname(os.path.realpath(__file__))
-    data_path = 'data/' + args.suffix +'.pickle'
+    data_path = '../data/' + args.suffix +'.pickle'
     data_path = os.path.join(cur_dir, data_path)
 
     with open(data_path, 'rb') as f:
@@ -218,67 +218,6 @@ def cal_accuracy(A, A_soft, A_hard, num_edges, epoch=0):
     return auc, acc, pre
 
 
-
-# class TrajrData(Dataset):
-#     def __init__(self, data, Tstep, interlacing=True):
-#         """
-#         data: Input tensor of shape [batch, nodes, variables, time]
-#         Tstep: The length of the time sequence for each sample.
-#         interlacing: 
-#             - True: Use a sliding window approach. Samples can overlap.
-#             - False: Use a non-overlapping chunk approach.
-#         """
-#         self.data = data
-#         self.Tstep = Tstep
-#         self.interlacing = interlacing
-        
-#         total_time_length = self.data.shape[-1]
-
-#         if interlacing:
-#             # For sliding window, the number of valid starting points is T - K + 1.
-#             # This already ensures that only full-length samples are created.
-#             if total_time_length < Tstep:
-#                 self.Tout = 0 # If the total length is less than Tstep, no samples can be formed.
-#             else:
-#                 self.Tout = total_time_length - Tstep + 1
-#         else:
-#             # For non-overlapping chunks, use integer division to find how many
-#             # full chunks can fit. This automatically discards the remainder.
-#             self.Tout = total_time_length // Tstep
-        
-#         self.batch = self.data.shape[0]
-#         self.datalen = self.batch * self.Tout
-        
-#         # Optional: Print a warning if data is being discarded
-#         if not interlacing and (total_time_length % Tstep != 0):
-#             discarded_steps = total_time_length % Tstep
-#             print(f"Warning: Discarding last {discarded_steps} time steps for each trajectory "
-#                   f"in non-interlacing mode because they don't form a full step of size {Tstep}.")
-
-#     def __len__(self):
-#         return self.datalen
-
-#     def __getitem__(self, idx):
-#         # This part remains correct because __len__ now provides the correct range for idx.
-#         if self.datalen == 0:
-#             raise IndexError("Dataset is empty. This can happen if Tstep is larger than the trajectory length.")
-            
-#         i = idx // self.Tout  # which trajectory in the batch
-#         j = idx % self.Tout   # which starting time step within the trajectory
-        
-#         if self.interlacing:
-#             # j is the direct starting index
-#             start_ind = j
-#         else:
-#             # j is the chunk index, so the start index is j * Tstep
-#             start_ind = j * self.Tstep
-            
-#         end_ind = start_ind + self.Tstep
-#         sample = self.data[i, :, :, start_ind:end_ind]
-        
-#         return sample
-
-
 def kl_categorical_uniform(
     preds, num_atoms, add_const=False, eps=1e-16
 ):
@@ -357,4 +296,33 @@ def generate_prediction_weight_adj(g):
     # A_soft = torch.clamp(edge_prob, 0, 1)
     g = g.cpu().numpy()
     return g
+
+def cal_accuracy_adj_v2(A, A_soft,  K=100):
+    mask = ~np.eye(A.shape[0],dtype=bool)
+    off_diag_idx = np.where(mask)
+
+    scores = A_soft[off_diag_idx]
+    labels = A[off_diag_idx]
+    
+    scores = torch.tensor(scores).unsqueeze(0)
+    labels = torch.tensor(labels).unsqueeze(0)
+
+    tot_pearson = edge_tot_pearson(scores, labels)
+    # if tot_pearson <0:
+    #     scores = -scores
+    # scores -= scores.min()
+    tot_pearson = edge_tot_pearson(scores, labels)
+
+    # print(f'scores:{scores.mean()},scores_max:{scores.max()}, scores_min:{scores.min()}, labels:{labels.mean()}, labels_max:{labels.max()}')
+    
+    # corr, p = spearmanr(scores.flatten(), labels.flatten())
+    _, topk_indices = torch.topk(labels, K)
+    scores_topk = scores[:, topk_indices]
+    labels_topk = labels[:, topk_indices]
+    
+    tot_pearson_topk = edge_tot_pearson(scores_topk, labels_topk)
+    
+    tot_pearson = round(tot_pearson, 5)
+    tot_pearson_topk = round(tot_pearson_topk, 5)
+    return tot_pearson, tot_pearson_topk
    
