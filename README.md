@@ -1,7 +1,9 @@
 # DARI: Code for the paper: Decoupling Forward and Feedback Flows: A Dual-Attention Framework for Relational Inference
 DARI is a neural relational inference framework designed to recover latent interaction graphs from observed system trajectories. By training a neural surrogate to reconstruct underlying dynamics, the model discovers the hidden topology that best explains the physical evolution of a system. The learning process optimizes a joint objective that integrates a likelihood-based prediction term for dynamics reconstruction and a structural regularization term to ensure sparse and plausible graph topologies.
 
-<img src="util/relational_inference.png" width="500">
+<p align="center">
+  <img src="util/relational_inference.png" width="500">
+</p>
 
 ## Abstract
 Inferring latent interaction structures from observational time series is a fundamental yet challenging problem in dynamical systems. Existing deep learning methods employ unidirectional information aggregation via incoming edges, failing to identify the reciprocal coupling mechanisms prevalent in real dynamics as well as the feedback effects induced by sampling intervals, which leads to inferential bias. To address this, we propose the Dual-Attention Relational Inference (DARI), a framework designed to learn latent interaction structures from dynamical observations. DARI employs a coupled bidirectional attention mechanism to model forward and feedback dynamics, effectively decoupling information flow from the physical structure.  Extensive synthetic experiments demonstrate consistent improvements in structural recovery across diverse graph topologies, including undirected, directed, and weighted graphs. Experiments on COVID-19 data further show that the inferred transmission structures are consistent with real-world population mobility patterns. In addition, the elimination of costly edge-wise computations in DARI leads to substantial gains in both runtime and memory efficiency. 
