@@ -12,8 +12,13 @@
   <img src="util/relational_inference.png" width="350">
 </p>
 
-## 📖 Abstract
-Inferring latent interaction structures from observational time series is a fundamental yet challenging problem in dynamical systems. Existing deep learning methods employ unidirectional information aggregation via incoming edges, failing to identify the reciprocal coupling mechanisms prevalent in real dynamics as well as the feedback effects induced by sampling intervals, which leads to inferential bias. To address this, we propose the Dual-Attention Relational Inference (DARI), a framework designed to learn latent interaction structures from dynamical observations. DARI employs a coupled bidirectional attention mechanism to model forward and feedback dynamics, effectively decoupling information flow from the physical structure.  Extensive synthetic experiments demonstrate consistent improvements in structural recovery across diverse graph topologies, including undirected, directed, and weighted graphs. Experiments on COVID-19 data further show that the inferred transmission structures are consistent with real-world population mobility patterns. In addition, the elimination of costly edge-wise computations in DARI leads to substantial gains in both runtime and memory efficiency. 
+## 🌟 Highlights
+
+- **🔄 Dual-Attention Architecture**: Mitigates systemic biases inherent in unidirectional aggregation by modeling reciprocal coupling, leading to more robust relational inference.
+- **⚡ High Efficiency**: Significantly reduces memory footprint and computational cost by replacing expensive edge-wise operations with learnable attention mechanisms.
+- **🧩 Unified Framework**: Seamlessly generalizes across diverse graph topologies, naturally handling **directed, undirected, weighted, and unweighted** graphs.
+- **🔬 Extensive Validation**: Rigorously tested on **7 diverse dynamical systems** (Kuramoto, Springs, SIS, FJ, MM, Diffusion, CMN), demonstrating robustness across linear, nonlinear, chaotic, and stochastic regimes.
+- **🌍 Real-World Validation**: Validated on US COVID-19 data, where inferred transmission networks align closely with real-world population mobility patterns.
 
 ## 🛠️ Installation
 
