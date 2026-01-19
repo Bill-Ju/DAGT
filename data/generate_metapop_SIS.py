@@ -107,41 +107,41 @@ def simulation_metapop_sis(steps, P):
 # # iteration
 # def simulation_sis(steps):
 #     """
-#     使用离散时间概率模型模拟网络上的 SIS 过程。
+#     Simulate SIS process on network using discrete-time probabilistic model.
 #     """
-#     # --- 初始化 ---
-#     # 随机初始化感染者比例
-#     x = np.random.rand(n) * 0.1 # 初始感染比例较低
+#     # --- Initialization ---
+#     # Randomly initialize infection proportion
+#     x = np.random.rand(n) * 0.1 # Initial infection proportion is low
 #     s = 1 - x
 
-#     # 初始化轨迹记录
+#     # Initialize trajectory recording
 #     x_trajr = x.reshape(1, -1)
 #     s_trajr = s.reshape(1, -1)
 
 
-#     # --- 模拟主循环 ---
+#     # --- Main simulation loop ---
 #     for t in range(1, steps):
 #         infection_rate = 1 - np.exp(-beta * (A @ x))
 #         infect = s * infection_rate
         
-#         # 更新状态
+#         # Update state
 #         x_new = x  + infect
 #         s_new = s  - infect
 
-#         # 保证比例在 [0, 1] 范围内
+#         # Ensure proportion is in [0, 1] range
 #         x = np.clip(x_new, 0, 1)
 #         s = np.clip(s_new, 0, 1)
 
-#         # 记录轨迹
+#         # Record trajectory
 #         x_trajr = np.concatenate([x_trajr, x.reshape(1, -1)], axis=0)
 #         s_trajr = np.concatenate([s_trajr, s.reshape(1, -1)], axis=0)
         
-#     # --- 格式化输出 ---
-#     # 将 s 和 x 轨迹拼接在最后一个维度上
+#     # --- Format output ---
+#     # Concatenate s and x trajectories on the last dimension
 #     x_trajr = np.expand_dims(x_trajr, axis=-1)
 #     s_trajr = np.expand_dims(s_trajr, axis=-1)
     
-#     # 最终形状为 [steps, n, 2]，通道0是I(x)，通道1是S(s)
+#     # Final shape is [steps, n, 2], channel 0 is I(x), channel 1 is S(s)
 #     trajectory = np.concatenate((x_trajr, s_trajr), axis=-1)
     
 #     return trajectory

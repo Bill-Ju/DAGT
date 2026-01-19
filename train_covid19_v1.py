@@ -210,7 +210,7 @@ def spawn_train_process(args_obj_for_exp): # Receive args object
 
 if __name__ == '__main__':
     
-    args = parse_args(config_name='config_covid19_v1') # 解析命令行参数并加载配置文件
-    if not hasattr(args, 'pwd'): args.pwd = os.getcwd() # 获取当前工作目录
+    args = parse_args(config_name='config_covid19_v1') 
+    if not hasattr(args, 'pwd'): args.pwd = os.getcwd() 
     
     spawn_train_process(args)

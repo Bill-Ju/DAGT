@@ -91,13 +91,10 @@ if __name__ == "__main__":
             G = nx.DiGraph(G)
             
         min_w = 0.01 
-            # 最大权重 (小于等于 1)
+
         max_w = 1.0   
         for u, v in G.edges():
-            # 使用 np.random.uniform 在 [min_w, max_w) 范围内生成均匀随机数
             weight = np.random.uniform(min_w, max_w)
-            
-            # 将权重赋值给边的 'weight' 属性
             G[u][v]['weight'] = weight
 
         A = nx.to_numpy_array(G)

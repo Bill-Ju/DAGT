@@ -106,7 +106,7 @@ def save_model(epoch_idx, model, args,  logger):
 
 def load_model(model_to_load_into, load_model_path, args):
 
-    logger = logging.getLogger(f"Model") # 获取当前rank的logger
+    logger = logging.getLogger(f"Model") # Get logger for current rank
     loaded_epoch = 0
 
     base_save_dir = os.path.join(args.pwd, f'{args.save_path}/best_models/')
@@ -170,9 +170,9 @@ def setup_ddp_logger(rank, args, main_log_filename="experiment.log",
                      console_level_rank0=logging.INFO, console_level_other_ranks=logging.ERROR,
                      file_level_rank0=logging.INFO):
     """
-    为DDP环境设置logger。
-    Rank 0 会有一个主日志文件，并且控制台输出更详细。
-    其他Rank的控制台输出更简洁，可以选择性地将它们的错误也记录到主日志文件或单独文件。
+    Setup logger for DDP environment.
+    Rank 0 will have a main log file with more detailed console output.
+    Other ranks have more concise console output, with errors optionally logged to main or separate files.
     """
     logger = logging.getLogger(f"DDP_Rank_{rank}")
     # Set the global level of logger, handlers can have their own higher levels
@@ -220,13 +220,13 @@ def setup_ddp_logger(rank, args, main_log_filename="experiment.log",
 
 def save_ddp_model(rank, epoch_idx, ddp_model, training_history, args, mse=False, test=False):
     """
-    仅在 Rank 0 保存模型、优化器、调度器和训练历史。
+    Save model, optimizer, scheduler, and training history only on Rank 0.
     optimizers_dict: {'name1': optimizer1, 'name2': optimizer2}
     schedulers_dict: {'name1': scheduler1, 'name2': scheduler2}
-    training_history: 包含训练信息的对象或字典，例如损失列表
+    training_history: Object or dictionary containing training information, such as loss lists
     """
     if rank == 0:
-        logger = logging.getLogger(f"DDP_Rank_{rank}") # 获取当前rank的logger
+        logger = logging.getLogger(f"DDP_Rank_{rank}") # Get logger for current rank
         logger.info(f'Saving model and states at epoch {epoch_idx+1}...')
         
         now = datetime.now()
@@ -237,7 +237,7 @@ def save_ddp_model(rank, epoch_idx, ddp_model, training_history, args, mse=False
 
         content = {
             'epoch': epoch_idx + 1,
-            'model_state_dict': ddp_model.module.state_dict(), # 关键：保存 .module 的 state_dict
+            'model_state_dict': ddp_model.module.state_dict(), # Key: Save .module's state_dict
         }
         # # Save optimizer state
         # for name, optim in optimizers_dict.items():
@@ -249,7 +249,7 @@ def save_ddp_model(rank, epoch_idx, ddp_model, training_history, args, mse=False
         if training_history is not None:
             content['training_history'] = training_history
             
-        datadir_basename = args.data_dir.split('/')[-1] # 提取 'train_data_v5'
+        datadir_basename = args.data_dir.split('/')[-1] # Extract 'train_data_v5'
         subdir_name = f"{datadir_basename}_{month}_{day}"
         if test:
             base_save_dir = os.path.join(args.pwd, f'{args.save_path}/best_models/test/{args.backbone}/{args.loss_type}/{subdir_name}/')
@@ -275,12 +275,12 @@ def save_ddp_model(rank, epoch_idx, ddp_model, training_history, args, mse=False
 
 def load_ddp_model(rank, model_to_load_into, load_model_path, args):
     """
-    在 Rank 0 加载模型、优化器和调度器状态，DDP 会自动同步模型参数。
-    优化器和调度器状态只在 rank 0 加载，如果需要在其他 rank 上恢复它们（通常不需要），
-    则需要额外的广播逻辑。
-    返回加载的 epoch 数（如果有）和其他训练历史。
+    Load model, optimizer, and scheduler state on Rank 0, DDP will automatically synchronize model parameters.
+    Optimizer and scheduler states are only loaded on rank 0. If you need to restore them on other ranks (usually not needed),
+    additional broadcast logic is required.
+    Return loaded epoch count (if any) and other training history.
     """
-    logger = logging.getLogger(f"DDP_Rank_{rank}") # 获取当前rank的logger
+    logger = logging.getLogger(f"DDP_Rank_{rank}") # Get logger for current rank
     loaded_epoch = 0
     training_history_loaded = None
 

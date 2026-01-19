@@ -35,116 +35,55 @@ args = parser.parse_args()
 
 # beta = args.infection_rate
 # gamma = args.recovery_rate
-alpha = 0.22   # 本地感染率
-beta = 0.2   # 本地恢复率
-gamma = 0.05  # 迁移/扩散率
+alpha = 0.22   
+beta = 0.2   
+gamma = 0.05  
 
 def simulation_metapop_sis(steps, P):
-    """
-    使用离散时间模型模拟集合种群SIS过程。
-    """
-    # --- 初始化 ---
-    i = np.random.rand(n) * 0.1  # 初始感染比例
+    i = np.random.rand(n) * 0.1 
     s = 1 - i
     
-    # 初始化轨迹记录
     i_trajr = i.reshape(1, -1)
     s_trajr = s.reshape(1, -1)
 
-    # 预计算扩散项所需的部分
     P_out_strength = P.sum(axis=1) # D_out[i] = Σ_j P_ij
     
-    # --- 模拟主循环 ---
+    # --- Main simulation loop ---
     for t in range(1, steps):
-        # --- 1. 反应步骤 (本地 SIS 动态) ---
-        
-        # a. 计算本地新增感染和恢复的个体比例
-        #    这里我们使用一个更简单的本地感染项，以匹配微分方程的形式
-        #    infect = s * (1 - np.exp(-alpha * i)) # 泊松模型
-        #    或者更简单的均场近似：
         infect_local = alpha * s * i
         recover_local = beta * i
         
-        # b. 计算反应后的中间状态
         i_after_reaction = i + infect_local - recover_local
         s_after_reaction = s - infect_local + recover_local
 
-        # --- 2. 扩散步骤 (个体在节点间迁移) ---
         
-        # a. 计算因扩散导致的感染者和易感者的净变化
-        #    Δi_diffusion = gamma * (总流入 - 总流出)
+        #    Δi_diffusion = gamma * (total inflow - total outflow)
         diffusion_net_change_i = gamma * (P.T @ i - P_out_strength * i)
         diffusion_net_change_s = gamma * (P.T @ s - P_out_strength * s)
 
-        # b. 将扩散变化应用到反应后的状态上，得到最终的新状态
+
         i_new = i_after_reaction + diffusion_net_change_i
         s_new = s_after_reaction + diffusion_net_change_s
         
-        # 更新状态变量 (使用旧的状态 i, s 进行扩散计算)
         i = i_new
         s = s_new
-        
-        # 保证比例在 [0, 1] 范围内
         i = np.clip(i, 0, 1)
-        # 确保 s+i=1
+
         s = 1 - i
         
-        # 记录轨迹
+        # Record trajectory
         i_trajr = np.concatenate([i_trajr, i.reshape(1, -1)], axis=0)
         s_trajr = np.concatenate([s_trajr, s.reshape(1, -1)], axis=0)
         
-    # --- 格式化输出 ---
+    # --- Format output ---
     i_trajr = np.expand_dims(i_trajr, axis=-1)
 
     s_trajr = np.expand_dims(s_trajr, axis=-1)
     
-    # 最终形状为 [steps, n, 2]，通道0是I(i)，通道1是S(s)
     # trajectory = np.concatenate((i_trajr, s_trajr), axis=-1)
     
     return i_trajr
 
-
-# # iteration
-# def simulation_sis(steps):
-#     """
-#     使用离散时间概率模型模拟网络上的 SIS 过程。
-#     """
-#     # --- 初始化 ---
-#     # 随机初始化感染者比例
-#     x = np.random.rand(n) * 0.1 # 初始感染比例较低
-#     s = 1 - x
-
-#     # 初始化轨迹记录
-#     x_trajr = x.reshape(1, -1)
-#     s_trajr = s.reshape(1, -1)
-
-
-#     # --- 模拟主循环 ---
-#     for t in range(1, steps):
-#         infection_rate = 1 - np.exp(-beta * (A @ x))
-#         infect = s * infection_rate
-        
-#         # 更新状态
-#         x_new = x  + infect
-#         s_new = s  - infect
-
-#         # 保证比例在 [0, 1] 范围内
-#         x = np.clip(x_new, 0, 1)
-#         s = np.clip(s_new, 0, 1)
-
-#         # 记录轨迹
-#         x_trajr = np.concatenate([x_trajr, x.reshape(1, -1)], axis=0)
-#         s_trajr = np.concatenate([s_trajr, s.reshape(1, -1)], axis=0)
-        
-#     # --- 格式化输出 ---
-#     # 将 s 和 x 轨迹拼接在最后一个维度上
-#     x_trajr = np.expand_dims(x_trajr, axis=-1)
-#     s_trajr = np.expand_dims(s_trajr, axis=-1)
-    
-#     # 最终形状为 [steps, n, 2]，通道0是I(x)，通道1是S(s)
-#     trajectory = np.concatenate((x_trajr, s_trajr), axis=-1)
-    
-#     return trajectory
 
 
 if __name__ == '__main__':

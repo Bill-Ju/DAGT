@@ -89,7 +89,7 @@ def is_undirected_float(A, tolerance=1e-8):
         return False
     # Use np.allclose to check floating-point symmetry
     return np.allclose(A, A.T, atol=tolerance)
-print(f"A_weighted 是无向图吗? {is_undirected_float(A)}")
+print(f"Is A_weighted an undirected graph? {is_undirected_float(A)}")
 Tstep = args.Tstep
 batch_size = args.batch_size
 epochs = args.num_epoch

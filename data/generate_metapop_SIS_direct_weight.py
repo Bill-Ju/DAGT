@@ -35,8 +35,8 @@ args = parser.parse_args()
 
 # beta = args.infection_rate
 # gamma = args.recovery_rate
-alpha = 0.22  # 本地感染率
-beta = 0.2    # 本地恢复率
+alpha = 0.22  
+beta = 0.2    
 gamma = 0.1  # migration/diffusion rate
 
 def simulation_metapop_sis(steps, P):
@@ -104,49 +104,6 @@ def simulation_metapop_sis(steps, P):
     return i_trajr
 
 
-# # iteration
-# def simulation_sis(steps):
-#     """
-#     Simulate SIS process on network using discrete time probabilistic model.
-#     """
-#     # --- Initialization ---
-#     # Randomly initialize infection proportion
-#     x = np.random.rand(n) * 0.1 # Initial infection proportion is low
-#     s = 1 - x
-
-#     # Initialize trajectory recording
-#     x_trajr = x.reshape(1, -1)
-#     s_trajr = s.reshape(1, -1)
-
-
-#     # --- 模拟主循环 ---
-#     for t in range(1, steps):
-#         infection_rate = 1 - np.exp(-beta * (A @ x))
-#         infect = s * infection_rate
-        
-#         # 更新状态
-#         x_new = x  + infect
-#         s_new = s  - infect
-
-#         # 保证比例在 [0, 1] 范围内
-#         x = np.clip(x_new, 0, 1)
-#         s = np.clip(s_new, 0, 1)
-
-#         # 记录轨迹
-#         x_trajr = np.concatenate([x_trajr, x.reshape(1, -1)], axis=0)
-#         s_trajr = np.concatenate([s_trajr, s.reshape(1, -1)], axis=0)
-        
-#     # --- 格式化输出 ---
-#     # 将 s 和 x 轨迹拼接在最后一个维度上
-#     x_trajr = np.expand_dims(x_trajr, axis=-1)
-#     s_trajr = np.expand_dims(s_trajr, axis=-1)
-    
-#     # 最终形状为 [steps, n, 2]，通道0是I(x)，通道1是S(s)
-#     trajectory = np.concatenate((x_trajr, s_trajr), axis=-1)
-    
-#     return trajectory
-
-
 if __name__ == '__main__':
     assert args.graph in {'ER', 'NWS', 'BA'}, 'Unknown Graph Type'
     for exp_id in range(args.exp_num):
@@ -170,13 +127,10 @@ if __name__ == '__main__':
             )
             G = nx.DiGraph(G)
         min_w = 0.01 
-        # 最大权重 (小于等于 1)
+
         max_w = 1.0   
         for u, v in G.edges():
-            # 使用 np.random.uniform 在 [min_w, max_w) 范围内生成均匀随机数
             weight = np.random.uniform(min_w, max_w)
-            
-            # 将权重赋值给边的 'weight' 属性
             G[u][v]['weight'] = weight
             
         A = nx.to_numpy_array(G)
