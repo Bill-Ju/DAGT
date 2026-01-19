@@ -14,10 +14,10 @@
 
 ## 🌟 Highlights
 
-- **🔄 Dual-Attention Architecture**: Mitigates systemic biases inherent in unidirectional aggregation by modeling reciprocal coupling, leading to more robust relational inference.
-- **⚡ High Efficiency**: Significantly reduces memory footprint and computational cost by replacing expensive edge-wise operations with learnable attention mechanisms.
+- **🔄 Dual-Attention Architecture**: Mitigates systemic biases inherent in unidirectional aggregation by modeling bidirectional coupling.
+- **⚡ High Efficiency**: Significantly reduces memory footprint and computational cost by replacing expensive edge-wise operations.
 - **🧩 Unified Framework**: Seamlessly generalizes across diverse graph topologies, naturally handling **directed, undirected, weighted, and unweighted** graphs.
-- **🔬 Extensive Validation**: Rigorously tested on **7 diverse dynamical systems** (Kuramoto, Springs, SIS, FJ, MM, Diffusion, CMN), demonstrating robustness across linear, nonlinear, chaotic, and stochastic regimes.
+- **🔬 Extensive Validation**: Rigorously tested on **7 diverse dynamical systems**, including Kuramoto, Springs, SIS, FJ, MM, Diffusion, and CMN.
 - **🌍 Real-World Validation**: Validated on US COVID-19 data, where inferred transmission networks align closely with real-world population mobility patterns.
 
 ## 🛠️ Installation
