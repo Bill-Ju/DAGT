@@ -154,7 +154,6 @@ if __name__ == '__main__':
         p = args.p
         k = args.k
         
-        # edge_path = '/home/zjy/project/AnyEpi/data/simulate/edges.csv'
         # air_edge = pd.read_csv(edge_path)
         np.random.seed(exp_id)
         if args.graph in 'ER':

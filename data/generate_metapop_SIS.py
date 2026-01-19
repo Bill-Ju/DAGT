@@ -154,23 +154,13 @@ if __name__ == '__main__':
         p = args.p
         k = args.k
         
-        edge_path = '/home/zjy/project/AnyEpi/data/simulate/edges.csv'
-        air_edge = pd.read_csv(edge_path)
-        # np.random.seed(exp_id)
-        # if args.graph in 'ER':
-        #     G = nx.erdos_renyi_graph(n,p,seed=exp_id)
-        # elif args.graph in 'NWS':
-        #     G = nx.newman_watts_strogatz_graph(n,k,p,seed=exp_id)
-        # elif args.graph in 'BA':
-        #     G = nx.barabasi_albert_graph(n,k,seed=exp_id)
-        
-        source_indices = air_edge['Source']
-        target_indices = air_edge['Target']
-        edge_weights = air_edge['edge_weight']
-        G = nx.DiGraph()
-        
-        for src, tgt, weight in zip(source_indices, target_indices, edge_weights):
-            G.add_edge(src, tgt, weight=weight)
+        np.random.seed(exp_id)
+        if args.graph in 'ER':
+            G = nx.erdos_renyi_graph(n,p,seed=exp_id)
+        elif args.graph in 'NWS':
+            G = nx.newman_watts_strogatz_graph(n,k,p,seed=exp_id)
+        elif args.graph in 'BA':
+            G = nx.barabasi_albert_graph(n,k,seed=exp_id)
             
         A = nx.to_numpy_array(G)
         
