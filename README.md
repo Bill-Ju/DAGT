@@ -28,17 +28,9 @@
    ```
 
 2. Install dependencies:
-   Install the following packages manually:
-   - numpy
-   - pandas
-   - torch
-   - geopandas
-   - matplotlib
-   - networkx
-   - scipy
-   - requests
-
-3. Ensure Python 3.7+ is installed.
+   ```bash
+   pip install numpy pandas torch geopandas matplotlib networkx scipy requests
+   ```
 
 ## 🚀 Data Generation and Training
 
