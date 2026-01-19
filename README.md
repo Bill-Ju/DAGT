@@ -2,7 +2,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.7%2B-blue)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-1.8%2B-orange)](https://pytorch.org/)
-[![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
+<!-- [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE) -->
 
 > **Official implementation for the paper: "Decoupling Forward and Feedback Flows: A Dual-Attention Framework for Relational Inference"**
 
