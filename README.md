@@ -1,4 +1,4 @@
-# 🕸️ DARI: Decoupling Forward and Feedback Flows
+# 🕸️ DARI: Dual-Attention for Relational Inference
 
 [![Python](https://img.shields.io/badge/Python-3.7%2B-blue)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-1.8%2B-orange)](https://pytorch.org/)
@@ -6,10 +6,10 @@
 
 > **Official implementation for the paper: "Decoupling Forward and Feedback Flows: A Dual-Attention Framework for Relational Inference"**
 
-**DARI** (Dual-Attention for Relational Inference) is a novel neural relational inference framework designed to recover latent interaction graphs from observed system trajectories. By training a neural surrogate to reconstruct underlying dynamics, the model discovers the hidden topology that best explains the physical evolution of a system.
+**DARI** is a neural relational inference framework designed to recover latent interaction graphs from observed system trajectories. By training a neural surrogate to reconstruct underlying dynamics, the model discovers the hidden topology that best explains the physical evolution of a system.
 
 <p align="center">
-  <img src="util/relational_inference.png" width="500">
+  <img src="util/relational_inference.png" width="350">
 </p>
 
 ## 📖 Abstract
