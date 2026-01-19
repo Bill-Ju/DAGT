@@ -29,7 +29,7 @@
 
 2. Install dependencies:
    ```bash
-   pip install numpy pandas torch geopandas matplotlib networkx scipy requests
+   pip install numpy pandas torch geopandas matplotlib networkx scipy
    ```
 
 ## 🚀 Data Generation and Training
