@@ -1,4 +1,4 @@
-# 🕸️ DARI: Dual-Attention for Relational Inference
+# 🔄 DARI: Dual-Attention for Relational Inference
 
 [![Python](https://img.shields.io/badge/Python-3.7%2B-blue)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-1.8%2B-orange)](https://pytorch.org/)
