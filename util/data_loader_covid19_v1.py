@@ -46,9 +46,8 @@ def load_disease_data(config, args):
     
     train_data = np.load(os.path.join(data_dir, train_data_file))
     
-    print(f"数据维度: [batch={train_data.shape[0]}, timesteps={train_data.shape[1]}, locations={train_data.shape[2]}]")
+    print(f"Data shape: [batch={train_data.shape[0]}, timesteps={train_data.shape[1]}, locations={train_data.shape[2]}]")
     
-
     train_data = torch.from_numpy(train_data).to(torch.float32)
     
     train_data = train_data[:, args.left: args.right, :, :]

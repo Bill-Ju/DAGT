@@ -178,7 +178,7 @@ def simulate_kuramoto(edges, num_atoms, num_timesteps=10000, T=None, dt=0.01):
         # num_timesteps = int((10000 / float(100)) - 1)
         # t0, t1, dt = 0, int((10000 / float(100)) / 10), 0.01
         dt = 0.01
-        t0, t1= 0, int(num_timesteps * dt * 10)
+        t0, t1 = 0, int(num_timesteps * dt * 10)
 
         T = np.arange(t0, t1, dt)
 

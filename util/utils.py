@@ -21,34 +21,31 @@ def load_data(args):
     # A = (np.rint(A)).astype(int)
 
 
-    # number of trajectories in train/validation/test set
+    # Number of trajectories in train/validation/test set
     if args.tr_num is not None:
-        assert x_tr.size(0) >= args.tr_num, 'No sufficent train data!'
+        assert x_tr.size(0) >= args.tr_num, 'No sufficient train data!'
         x_tr = x_tr[:args.tr_num,...]
     if args.va_num is not None:
-        assert x_va.size(0) >= args.va_num, 'No sufficent validation data!'
+        assert x_va.size(0) >= args.va_num, 'No sufficient validation data!'
         x_va = x_va[:args.va_num,...]
     if args.te_num is not None:
-        assert x_te.size(0) >= args.te_num, 'No sufficent test data!'
+        assert x_te.size(0) >= args.te_num, 'No sufficient test data!'
         x_te = x_te[:args.te_num,...]
 
-
-    # sample subsequence for larger obvervation interval
+    # Sample subsequence for larger observation interval
     if args.sample_freq != 1:
         x_tr = x_tr[:,0::args.sample_freq,:,:]
         x_va = x_va[:,0::args.sample_freq,:,:]
         x_te = x_te[:,0::args.sample_freq,:,:]
 
-
-
-    # trajectory length
+    # Trajectory length
     if args.trajr_length is not None:
         assert x_tr.size(1) >= args.trajr_length, 'Not enough trajectory length!' 
         x_tr = x_tr[:,:args.trajr_length,:,:]
         x_va = x_va[:,:args.trajr_length,:,:]
         x_te = x_te[:,:args.trajr_length,:,:]
 
-    #Normalize each system state dimension to [-1, 1]
+    # Normalize each system state dimension to [-1, 1]
     for i in range(x_tr.size(-1)):
         xmax = x_tr[:,:,:,i].max()
         xmin = x_tr[:,:,:,i].min()
@@ -57,11 +54,11 @@ def load_data(args):
         x_va[:,:,:,i] = (x_va[:,:,:,i] - xmin) * 2 / (xmax - xmin) -1
         x_te[:,:,:,i] = (x_te[:,:,:,i] - xmin) * 2 / (xmax - xmin) -1
     
-    # input data has shape [batch, time, nodes, variables]
+    # Input data has shape [batch, time, nodes, variables]
     x_tr = x_tr.permute(0,2,3,1)
     x_va = x_va.permute(0,2,3,1)
     x_te = x_te.permute(0,2,3,1)
-    # data has shape [batch, nodes, variables, time]
+    # Data has shape [batch, nodes, variables, time]
 
     print('Training Trajectories: {:03d}'.format(x_tr.size(0)),
         'Trajectory length: {:03d}'.format(x_tr.size(3)))
@@ -325,4 +322,4 @@ def cal_accuracy_adj_v2(A, A_soft,  K=100):
     tot_pearson = round(tot_pearson, 5)
     tot_pearson_topk = round(tot_pearson_topk, 5)
     return tot_pearson, tot_pearson_topk
-   
+
